@@ -44,6 +44,7 @@ Wrong number of arguments.${NC}"
   exit 1
 fi
 
+
 numberOfThreads=$1
 StarIndex=$2
 Riboreads=$3
@@ -52,19 +53,28 @@ unique_regions=$5
 coordinates_3_prime=$6
 
 out_path=$(dirname $bamfile)
+
+
+if [ ! -e  $out_path/genome_file.txt ]; then
+    cut -f1,2 /scratch/fuchs/agschulz/kalk/Homo_sapiens.GRCh38.dna.primary_assembly_110.fa.fai >\
+    $out_path/genome_chrom_ordering.txt
+    chmod 777 $out_path/genome_chrom_ordering.txt
+fi
+
+
 #align Riboreads against the genome
-STAR\
- --runThreadN $numberOfThreads\
- --alignEndsType EndToEnd\
- --outSAMstrandField intronMotif\
- --alignIntronMin 20\
- --alignIntronMax 1000000\
- --genomeDir $StarIndex\
- --readFilesIn $Riboreads\
- --twopassMode Basic\
- --outFileNamePrefix $out_path/$(basename $bamfile .bam)
-#/scratch/fuchs/agschulz/kalk/star/reference_110_ribo
-samtools view -@ $numberOfThreads -bo $bamfile $out_path/$(basename $bamfile .bam)Aligned.out.sam
+# STAR\
+#  --runThreadN $numberOfThreads\
+#  --alignEndsType EndToEnd\
+#  --outSAMstrandField intronMotif\
+#  --alignIntronMin 20\
+#  --alignIntronMax 1000000\
+#  --genomeDir $StarIndex\
+#  --readFilesIn $Riboreads\
+#  --twopassMode Basic\
+#  --outFileNamePrefix $out_path/$(basename $bamfile .bam)
+# #/scratch/fuchs/agschulz/kalk/star/reference_110_ribo
+# samtools view -@ $numberOfThreads -bo $bamfile $out_path/$(basename $bamfile .bam)Aligned.out.sam
 sortedBamFile=$out_path/$(basename $bamfile .bam)_sorted.bam
 samtools sort -o $sortedBamFile $bamfile
 samtools index -@ 10 $sortedBamFile
@@ -85,7 +95,8 @@ sort -k1,1 -k2,2n $unique_regions > $sorted_unique_regions
 # if not create
 if [ ! -e  $out_path/genome_file.txt ]; then
     cut -f1,2 /scratch/fuchs/agschulz/kalk/Homo_sapiens.GRCh38.dna.primary_assembly_110.fa.fai >\
-    $outpath/genome_chrom_ordering.txt
+    $out_path/genome_chrom_ordering.txt
+    chmod 777 $out_path/genome_chrom_ordering.txt
 fi
 
 # intersect such that both entries are reported
@@ -100,9 +111,10 @@ bedtools intersect\
   -a $sorted_unique_regions\
   -b $bedfile\
   -sorted\
-  -g $outpath/genome_chrom_ordering.txt\
+  -g $out_path/genome_chrom_ordering.txt\
+  | sort -nr -k19,19\
   > $sortedBedfile\
-  | sort -nr -k19
+
 
 
 # intersectbedfilerelativesorted=$out_path/$(basename $bedfile .bed)_intersect_counts_relative_sorted.bed
@@ -116,7 +128,19 @@ python /home/fuchs/agschulz/kalk/scripts/SplitORFs/Riboseq/Uniqueness_scripts/Ba
  $coordinates_3_prime\
  $randomfile
 
+sorted_randomfile="$out_path"/$(basename $randomfile .bed)_sorted.bed
+sort -k1,1 -k2,2n $randomfile > $sorted_randomfile
+
 randomintersectfile=$out_path/$(basename $bamfile .bam)_random_intersect_counts.bed
-bedtools intersect -s -wao -F 0.33 -a $randomfile -b $bedfile > $randomintersectfile
+bedtools intersect\
+ -s\
+  -wao\
+  -F 0.33\
+  -sorted\
+  -g $out_path/genome_chrom_ordering.txt \
+  -a $sorted_randomfile\
+  -b $bedfile\
+   | sort -nr -k19,19\
+   > $randomintersectfile 
 # randomintersectfilesorted=$out_path/$(basename $bamfile .bam)_random_intersect_counts_relative_sorted.bed
 # cat $randomintersectfile | awk -v OFS='\t' '{print $1,$2,$3,$4, $4/($3-$2)}' | sort -n -r -k 5 > $randomintersectfilesorted
