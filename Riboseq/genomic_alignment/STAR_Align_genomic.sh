@@ -62,7 +62,7 @@ if [ ! -e  $out_path/genome_file.txt ]; then
 fi
 
 
-#align Riboreads against the genome
+# align Riboreads against the genome
 # STAR\
 #  --runThreadN $numberOfThreads\
 #  --alignEndsType EndToEnd\
@@ -81,7 +81,7 @@ samtools index -@ 10 $sortedBamFile
 bedfile=$out_path/$(basename $bamfile .bam).bed
 
 echo "converting bam to bed"
-bedtools bamtobed -bed12 -i $sortedBamFile > $bedfile
+bedtools bamtobed -bed12 -i $sortedBamFile -split > $bedfile
 
 
 echo "intersecting with unique regions"
@@ -124,7 +124,7 @@ bedtools intersect\
 echo "Calculating random regions from 3 prime UTRs"
 randomfile=$out_path/$(basename $bamfile .bam)_random_background_regions.bed
 python /home/fuchs/agschulz/kalk/scripts/SplitORFs/Riboseq/Uniqueness_scripts/BackgroundRegions_bed_genomic.py\
- $unique_regions\
+ $sorted_unique_regions\
  $coordinates_3_prime\
  $randomfile
 
