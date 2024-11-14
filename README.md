@@ -7,7 +7,9 @@ of the unique regions.
 
 ## Directory Structure
 
-This section describes the main directories in the project and what they contain.
+The main directory contains subdectories with collections of scripts as well as the main scripts (latest) used for the transcriptomic alignment and evaluation of the transcriptomic validation method.\\
+The sbatch_transcriptomic_align_08_10_24_new_3_primes_new_unique_regions.sh needs to be called in order to run the transcriptomic analysis.\\
+The Input_scripts folder contains scripts from prefetching the Input_data until their pre-processing with fastp.\\
 
 ```plaintext
 Riboseq
@@ -21,4 +23,10 @@ Riboseq
 │   ├── plot_results.R
 │   └── additional_info.txt
 ├── old_scripts/
-└── play_around_bowtie_option_scripts/
+├── play_around_bowtie_option_scripts/
+├── Bowtie_Align_transcriptomic_server_bed.sh
+├── RiboSeqReportTranscriptomic_empirical_dist.Rmd
+├── helper_functions_Riboseq_report_new.R
+├── sbatch_transcriptomic_align_08_10_24_new_3_primes_new_unique_regions.sh
+└── transcriptomic_align_08_10_24_new_3_primes_new_unique_regions.sh
+
