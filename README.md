@@ -7,7 +7,7 @@ of the unique regions.
 
 ## Directory Structure
 
-The main directory contains subdectories with collections of scripts as well as the main scripts (latest) used for the transcriptomic alignment and evaluation of the transcriptomic validation method.\\
+The main directory contains subdectories with collections of scripts as well as the main scripts (latest) used for the transcriptomic alignment and evaluation of the transcriptomic validation method.<\br>
 The sbatch_transcriptomic_align_08_10_24_new_3_primes_new_unique_regions.sh needs to be called in order to run the transcriptomic analysis.\\
 The Input_scripts folder contains scripts from prefetching the Input_data until their pre-processing with fastp.\\
 
