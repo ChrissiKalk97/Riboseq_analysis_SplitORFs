@@ -1,3 +1,22 @@
+if (!requireNamespace("types", quietly = TRUE)) {
+    install.packages("types", repos = "https://cloud.r-project.org/")
+  }
+
+if (!requireNamespace("UpSetR", quietly = TRUE)) {
+    install.packages("UpSetR", repos = "https://cloud.r-project.org/")
+  }
+
+if (!requireNamespace("lemon", quietly = TRUE)) {
+    install.packages("lemon", repos = "https://cloud.r-project.org/")
+  }
+
+if (!requireNamespace("cmapR", quietly = TRUE)) {
+    if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager", repos = "https://cloud.r-project.org/")
+
+    BiocManager::install("cmapR")
+  }
+
 library(glue)
 library(types)
 library(stringr)
@@ -178,14 +197,14 @@ get_top_5_unique_regions <- function(dataframes_list, threshold){
 }
 
 
-count_unique_regions_get_count <- function(dataframes, unique_names_per_sample){
+count_unique_regions_get_count <- function(dataframes, unique_names_per_sample, outdir){
   relevantregionscount=list()
   frame_number = 1
   for(frame in dataframes){
     colnames(frame)=c("ID","start","stop","ORF","read_count",  "relative_count")
     frame$unique_name <- paste0(frame$ID,"-",frame$start,"-",frame$stop)
     frame$signficant <- ifelse(frame$unique_name %in% unique_names_per_sample[[as.character(frame_number)]], 1, 0)
-    write.csv(frame, paste(names(dataframes)[frame_number],  "unique_regions.csv", sep = "_"))
+    write.csv(frame, file.path(outdir, paste(names(dataframes)[frame_number],  "unique_regions.csv", sep = "_")))
     above_5_counter=0
     c=1
     for(count in frame$relative_count){

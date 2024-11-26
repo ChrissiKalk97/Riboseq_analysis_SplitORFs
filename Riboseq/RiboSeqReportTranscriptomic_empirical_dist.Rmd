@@ -20,6 +20,8 @@ source("helper_functions_Riboseq_report_new.R")
 ```{r}
 args <- params[[1]]
 path <- args[[1]]
+outdir_NMD <- paste(path, "NMD_transcriptome", "/")
+outdir_RI <- paste(path, "RI_transcriptome", "/")
 backgroundnmd <- calculate_background_threshold("NMD", path)
 print_thresholds("NMD", backgroundnmd, path)
 threshold=backgroundnmd
@@ -54,7 +56,7 @@ upset(fromList(upsetlist), order.by = "freq", nsets = 12, point.size = 2.25, lin
 
 The following table gives the number of unique regions with a count greater than or equal to 4:
 ```{r}
-count_unique_regions_get_count(list_nmddataframes, counts_and_names_list$unique_names)
+count_unique_regions_get_count(list_nmddataframes, counts_and_names_list$unique_names, outdir_NMD)
 ```
 
 ```{r}
@@ -103,5 +105,5 @@ upset(fromList(riupsetlist), order.by = "freq", nsets = 12, point.size = 2.25, l
 
 The following table gives the number of unique regions with a count greater than or equal to 4:
 ```{r}
-count_unique_regions_get_count(list_ridataframes, counts_and_names_list$unique_names)
+count_unique_regions_get_count(list_ridataframes, counts_and_names_list$unique_names, outdir_RI)
 ```

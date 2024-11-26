@@ -72,16 +72,19 @@ fi
 #  --genomeDir $StarIndex\
 #  --readFilesIn $Riboreads\
 #  --twopassMode Basic\
-#  --outFileNamePrefix $out_path/$(basename $bamfile .bam)
+# --outFileNamePrefix $out_path/$(basename $bamfile .bam)
 # #/scratch/fuchs/agschulz/kalk/star/reference_110_ribo
 # samtools view -@ $numberOfThreads -bo $bamfile $out_path/$(basename $bamfile .bam)Aligned.out.sam
+
+filteredBamFile=$out_path/$(basename $bamfile .bam)_filtered.bam
+samtools view -F 256 -F 2048 -b $bamfile > $filteredBamFile
 sortedBamFile=$out_path/$(basename $bamfile .bam)_sorted.bam
-samtools sort -o $sortedBamFile $bamfile
+samtools sort -o $sortedBamFile $filteredBamFile
 samtools index -@ 10 $sortedBamFile
 bedfile=$out_path/$(basename $bamfile .bam).bed
 
 echo "converting bam to bed"
-bedtools bamtobed -bed12 -i $sortedBamFile -split > $bedfile
+bedtools bamtobed -i $sortedBamFile -split > $bedfile
 
 
 echo "intersecting with unique regions"
@@ -90,6 +93,8 @@ sorted_unique_regions=$(dirname $unique_regions)/$(basename $unique_regions .bed
 
 # sort unique regions for intersect
 sort -k1,1 -k2,2n $unique_regions > $sorted_unique_regions
+sorted_bedfile=$out_path/$(basename $bedfile .bed)_chrom_sort.bed
+sort -k1,1 -k2,2n $bedfile > $sorted_bedfile
 
 # check if genome file for chromosome order for sorted intersect exists
 # if not create
@@ -109,11 +114,11 @@ bedtools intersect\
   -wao\
   -F 0.33\
   -a $sorted_unique_regions\
-  -b $bedfile\
+  -b $sorted_bedfile\
   -sorted\
   -g $out_path/genome_chrom_ordering.txt\
-  | sort -nr -k19,19\
-  > $sortedBedfile\
+  | sort -nr -k13,13\
+  > $sortedBedfile
 
 
 
@@ -123,7 +128,7 @@ bedtools intersect\
 
 echo "Calculating random regions from 3 prime UTRs"
 randomfile=$out_path/$(basename $bamfile .bam)_random_background_regions.bed
-python /home/fuchs/agschulz/kalk/scripts/SplitORFs/Riboseq/Uniqueness_scripts/BackgroundRegions_bed_genomic.py\
+python /home/fuchs/agschulz/kalk/scripts/SplitORFs/Riboseq/Random_regions/BackgroundRegions_bed_genomic.py\
  $sorted_unique_regions\
  $coordinates_3_prime\
  $randomfile
@@ -139,8 +144,8 @@ bedtools intersect\
   -sorted\
   -g $out_path/genome_chrom_ordering.txt \
   -a $sorted_randomfile\
-  -b $bedfile\
-   | sort -nr -k19,19\
+  -b $sorted_bedfile\
+   | sort -nr -k13,13\
    > $randomintersectfile 
 # randomintersectfilesorted=$out_path/$(basename $bamfile .bam)_random_intersect_counts_relative_sorted.bed
 # cat $randomintersectfile | awk -v OFS='\t' '{print $1,$2,$3,$4, $4/($3-$2)}' | sort -n -r -k 5 > $randomintersectfilesorted

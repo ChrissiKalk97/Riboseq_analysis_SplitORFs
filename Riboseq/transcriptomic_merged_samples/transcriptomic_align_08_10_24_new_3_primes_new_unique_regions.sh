@@ -35,7 +35,7 @@ control="/scratch/fuchs/agschulz/kalk/SplitORF/Riboseq/fastp/control_fastp.fastq
 treatment="/scratch/fuchs/agschulz/kalk/SplitORF/Riboseq/fastp/treatment_wo_05_fastp.fastq"
 
 #file with the 3'UTR background regiosn
-three_primes="/scratch/fuchs/agschulz/kalk/SplitORF/Riboseq/Input/three_primes_tsl1_2_refseq_prot_cod.bed"
+three_primes="/scratch/fuchs/agschulz/kalk/SplitORF/Riboseq/Input/three_primes_tsl1_refseq_prot_cod.bed"
 
 #Create a Logfile for the alignments in the output directory
 exec > >(tee -i $outputBowtie/AlignmentLogfile.txt)
