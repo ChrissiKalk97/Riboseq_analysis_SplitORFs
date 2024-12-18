@@ -63,18 +63,18 @@ fi
 
 
 # align Riboreads against the genome
-# STAR\
-#  --runThreadN $numberOfThreads\
-#  --alignEndsType EndToEnd\
-#  --outSAMstrandField intronMotif\
-#  --alignIntronMin 20\
-#  --alignIntronMax 1000000\
-#  --genomeDir $StarIndex\
-#  --readFilesIn $Riboreads\
-#  --twopassMode Basic\
-# --outFileNamePrefix $out_path/$(basename $bamfile .bam)
+STAR\
+ --runThreadN $numberOfThreads\
+ --alignEndsType EndToEnd\
+ --outSAMstrandField intronMotif\
+ --alignIntronMin 20\
+ --alignIntronMax 1000000\
+ --genomeDir $StarIndex\
+ --readFilesIn $Riboreads\
+ --twopassMode Basic\
+ --outFileNamePrefix $out_path/$(basename $bamfile .bam)
 # #/scratch/fuchs/agschulz/kalk/star/reference_110_ribo
-# samtools view -@ $numberOfThreads -bo $bamfile $out_path/$(basename $bamfile .bam)Aligned.out.sam
+samtools view -@ $numberOfThreads -bo $bamfile $out_path/$(basename $bamfile .bam)Aligned.out.sam
 
 filteredBamFile=$out_path/$(basename $bamfile .bam)_filtered.bam
 samtools view -F 256 -F 2048 -b $bamfile > $filteredBamFile
@@ -112,7 +112,6 @@ fi
 bedtools intersect\
   -s\
   -wao\
-  -F 0.33\
   -a $sorted_unique_regions\
   -b $sorted_bedfile\
   -sorted\
@@ -120,10 +119,6 @@ bedtools intersect\
   | sort -nr -k13,13\
   > $sortedBedfile
 
-
-
-# intersectbedfilerelativesorted=$out_path/$(basename $bedfile .bed)_intersect_counts_relative_sorted.bed
-# cat $sortedBedfile | awk -v OFS='\t' '{print $1,$2,$3,$4,$5, $5/($3-$2)}' | sort -nr -k 6 > $intersectbedfilerelativesorted 
 
 
 echo "Calculating random regions from 3 prime UTRs"
@@ -140,12 +135,10 @@ randomintersectfile=$out_path/$(basename $bamfile .bam)_random_intersect_counts.
 bedtools intersect\
  -s\
   -wao\
-  -F 0.33\
   -sorted\
   -g $out_path/genome_chrom_ordering.txt \
   -a $sorted_randomfile\
   -b $sorted_bedfile\
    | sort -nr -k13,13\
    > $randomintersectfile 
-# randomintersectfilesorted=$out_path/$(basename $bamfile .bam)_random_intersect_counts_relative_sorted.bed
-# cat $randomintersectfile | awk -v OFS='\t' '{print $1,$2,$3,$4, $4/($3-$2)}' | sort -n -r -k 5 > $randomintersectfilesorted
+
