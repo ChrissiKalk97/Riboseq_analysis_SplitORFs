@@ -61,7 +61,7 @@ coordinates_3_prime=$6
 
 out_path=$(dirname $bamfile)
 #align Riboreads against the transcriptome
-bowtie2 --threads $numberOfThreads -x $bowtieBaseName -U $Riboreads | samtools view -@ $numberOfThreads -bS > $bamfile
+# bowtie2 --threads $numberOfThreads -x $bowtieBaseName -U $Riboreads | samtools view -@ $numberOfThreads -bS > $bamfile
 bedfile=$out_path/$(basename $bamfile .bam).bed
 
 echo "converting bam to bed"
@@ -81,7 +81,7 @@ samtools index -@ 10 $sortedbamfile
 
 echo "Calculating random regions from 3 prime UTRs"
 randomfile=$out_path/$(basename $bamfile .bam)_random_background_regions.bed
-python ./Uniqueness_scripts/BackgroundRegions_bed.py $unique_regions $coordinates_3_prime $randomfile
+python ../Random_regions/BackgroundRegions_bed.py $unique_regions $coordinates_3_prime $randomfile
 randomintersectfile=$out_path/$(basename $bamfile .bam)_random_intersect_counts.bed
 bedtools intersect -c -F 0.33 -a $randomfile -b $bedfile > $randomintersectfile
 randomintersectfilesorted=$out_path/$(basename $bamfile .bam)_random_intersect_counts_relative_sorted.bed
