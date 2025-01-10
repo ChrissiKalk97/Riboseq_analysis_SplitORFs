@@ -178,24 +178,27 @@ count_unique_regions_above_threhsold <- function(dataframes,
         processed_frame <- frame %>%
             mutate(len = stop - start) %>%
         filter(nr_bp_overlap > 0) %>%
-          group_by(new_name, name_ribo) %>%
+          group_by(name, name_ribo) %>%
           summarize(total_bp_overlap = sum(nr_bp_overlap, na.rm = TRUE),
                     count_combinations = n(),
                     len = first(len),
                     chr_unique = first(chr_unique),
                     start = first(start),
-                    stop = first(stop))%>%
+                    stop = first(stop),
+                    new_name = paste(new_name, collapse = "_"))%>%
           filter(total_bp_overlap > 9) %>%  # Filter based on total bp overlap
-          group_by(new_name) %>%  # Group by new_name to count distinct name_ribo per new_name
+          group_by(name) %>%  # Group by name to count distinct name_ribo per name
           summarize(distinct_ribo_count = n_distinct(name_ribo),
                     len = first(len),
                     chr_unique = first(chr_unique),
                     start = first(start),
-                    stop = first(stop)) %>%
+                    stop = first(stop),
+                    new_name = first(new_name)) %>%
           mutate(num_reads = as.numeric(distinct_ribo_count), 
                  len = as.numeric(len),
                  relative_count = distinct_ribo_count/len) %>%
           arrange(desc(relative_count))  
+          
 
         frames_preprocessed[[length(frames_preprocessed) +
             1]] <- processed_frame
@@ -251,6 +254,7 @@ get_top_5_unique_regions <- function(dataframes_list, threshold) {
                                           "chr_unique",
                                           "start",
                                           "stop",
+                                          "new_name",
                                           "num_reads",
                                           "relative_count")
         unique_region_frame %>%
@@ -266,6 +270,7 @@ get_top_5_unique_regions <- function(dataframes_list, threshold) {
                                           "chr_unique",
                                           "start",
                                           "stop",
+                                          "new_name",
                                           "num_reads",
                                           "relative_count")
 
@@ -286,9 +291,9 @@ count_unique_regions_get_count <- function(dataframes, unique_names_per_sample, 
     relevantregionscount <- list()
     frame_number <- 1
     for (frame in dataframes) {
-        colnames(frame) <- c("new_name", "num_reads", "len",
+        colnames(frame) <- c("name", "num_reads", "len",
             "relative_count")
-        frame$significant <- ifelse(frame$new_name %in% unique_names_per_sample[[frame_number]],
+        frame$significant <- ifelse(frame$name %in% unique_names_per_sample[[frame_number]],
             1, 0)
         write.csv(frame, file.path(outdir, paste(names(dataframes)[frame_number],
             "unique_regions.csv", sep = "_")))
@@ -312,7 +317,7 @@ count_unique_regions_get_count <- function(dataframes, unique_names_per_sample, 
 
 Split_ORFs_validation <- function(dataframes, unique_names_per_sample, path) {
     # create empty dataframe to concatenate the dfs
-    df <- data.frame(matrix(ncol = 8, nrow = 0))
+    df <- data.frame(matrix(ncol = 9, nrow = 0))
     # Assign column names
     colnames(df) <- c("ID",
                     "distinct_ribo_count",
@@ -320,6 +325,7 @@ Split_ORFs_validation <- function(dataframes, unique_names_per_sample, path) {
                     "chr_unique",
                     "start",
                     "stop",
+                    "new_name",
                     "num_reads",
                     "relative_count")
 
@@ -331,6 +337,7 @@ Split_ORFs_validation <- function(dataframes, unique_names_per_sample, path) {
                             "chr_unique",
                             "start",
                             "stop",
+                            "new_name",
                             "num_reads",
                             "relative_count")
 
@@ -354,6 +361,7 @@ Split_ORFs_validation <- function(dataframes, unique_names_per_sample, path) {
                                           "chr_unique",
                                           "start",
                                           "stop",
+                                          "new_name",
                                           "num_reads",
                                           "relative_count")], file.path(path, paste0(names(dataframes)[frame_number], '_two_regions_validated_on_transcript.csv')))
         frame_number <- frame_number + 1
@@ -366,8 +374,4 @@ Split_ORFs_validation <- function(dataframes, unique_names_per_sample, path) {
         ungroup() %>%
         arrange(ID)
 
-
-    # print(df[, c("new_name", "num_reads", "len",
-      #           "relative_count")],
-       # max = nrow(df))
 }

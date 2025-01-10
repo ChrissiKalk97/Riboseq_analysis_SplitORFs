@@ -48,7 +48,7 @@ The following plot shows how many unique regions are expressed in which dataset 
 ```{r, echo=FALSE, message=FALSE}
 names(counts_and_names_list$unique_names) <- names(list_nmddataframes)
 upsetlist <- counts_and_names_list$unique_names
-upsetlist <- lapply(upsetlist, function(x) x$new_name)
+upsetlist <- lapply(upsetlist, function(x) x$name)
 upset(fromList(upsetlist), order.by = "freq", nsets = 12, point.size = 2.25, line.size = 1.5, set_size.show = TRUE,
       set_size.scale_max = 550, 
       mainbar.y.label = "Unique region Intersections", sets.x.label = "Matching unique regions per dataset",
@@ -97,7 +97,7 @@ The following plot shows how many unique regions are expressed in which dataset 
 ```{r, echo=FALSE, message=FALSE}
 names(counts_and_names_list$unique_names) <- names(list_ridataframes)
 upsetlist <- counts_and_names_list$unique_names
-upsetlist <- lapply(upsetlist, function(x) x$new_name)
+upsetlist <- lapply(upsetlist, function(x) x$name)
 upset(fromList(upsetlist), order.by = "freq", nsets = 12, point.size = 2.25, line.size = 1.5, set_size.show = TRUE,
       set_size.scale_max = 400, 
       mainbar.y.label = "Unique region Intersections", sets.x.label = "Matching unique regions per dataset",
