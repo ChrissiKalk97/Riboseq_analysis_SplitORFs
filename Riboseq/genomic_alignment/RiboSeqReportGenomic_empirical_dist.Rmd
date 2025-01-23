@@ -53,6 +53,14 @@ upset(fromList(upsetlist), order.by = "freq", nsets = 12, point.size = 2.25, lin
       set_size.scale_max = 550, 
       mainbar.y.label = "Unique region Intersections", sets.x.label = "Matching unique regions per dataset",
       text.scale = c(1, 1, 0.9, 1, 1, 1))# c(1.5, 1.25, 0.9, 1.25, 1.25, 1.5)
+png(file.path(outdir_NMD, 'upset_NMD.png'))
+
+upset(fromList(upsetlist), order.by = "freq", nsets = 12, point.size = 2.25, line.size = 1.5, set_size.show = TRUE,
+      set_size.scale_max = 550, 
+      mainbar.y.label = "Unique region Intersections", sets.x.label = "Matching unique regions per dataset",
+      text.scale = c(1, 1, 0.9, 1, 1, 1))# c(1.5, 1.25, 0.9, 1.25, 1.25, 1.5)
+
+dev.off()
 
 ```
 
@@ -102,6 +110,8 @@ upset(fromList(upsetlist), order.by = "freq", nsets = 12, point.size = 2.25, lin
       set_size.scale_max = 400, 
       mainbar.y.label = "Unique region Intersections", sets.x.label = "Matching unique regions per dataset",
       text.scale = c(1, 1, 0.9, 1, 1, 1))
+png(file.path(outdir_RI, 'upset_RI.png'))
+dev.off()
 
 ```
 

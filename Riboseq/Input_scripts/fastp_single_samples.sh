@@ -30,5 +30,6 @@ fastp \
     -o ${OUTDIR}/${SAMPLE}_fastp.fastq \
     --json ${OUTDIR}/${SAMPLE}.fastp.json \
     --thread 16 \
-    --length_required 20
+    --length_required 20\
+    --length_limit 45
 done

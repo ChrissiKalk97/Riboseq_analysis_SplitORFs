@@ -10,7 +10,7 @@ source activate Riboseq
 #This script calls the aligning scripts to align the Ribo-Seq reads to the transcriptome
 # and calculates the overlap with the previously determined unique regions (main pipeline) of RI and NMD
 #The following are the main directories for the pipeline outputs and for the alignment outputs
-outputSTAR="/scratch/fuchs/agschulz/kalk/SplitORF/Riboseq/Output/Bowtie_genomic_16_12_24_cp"
+outputSTAR="/scratch/fuchs/agschulz/kalk/SplitORF/Riboseq/Output/Bowtie_genomic_16_12_24_seed_100"
 nmd=${outputSTAR}"/NMD_genome"
 unique_region_dir="/scratch/fuchs/agschulz/kalk/SplitORF/Riboseq/Input/Unique_regions/genomic"
 ri=${outputSTAR}"/RI_genome"
@@ -53,25 +53,25 @@ echo "Starting alignment against genome"
 
 
 
-# for i in $input_data; do
-# sample_name=$(basename "$i" _fastp.fastq)
-# source ./STAR_Align_genomic_chromosome_sorting.sh  16 /scratch/fuchs/agschulz/kalk/star/reference_110_ribo $i\
-#  $nmd/${sample_name}_NMD $unique_region_dir/Unique_DNA_regions_genomic_NMD_16_12_24.bed $three_primes
+for i in $input_data; do
+sample_name=$(basename "$i" _fastp.fastq)
+source ./STAR_Align_genomic_20_01_25_resample_random.sh 16 /scratch/fuchs/agschulz/kalk/star/reference_110_ribo $i\
+ $nmd/${sample_name}_NMD $unique_region_dir/Unique_DNA_regions_genomic_NMD_16_12_24.bed $three_primes
 
-# source ./STAR_Align_genomic_chromosome_sorting.sh 16 /scratch/fuchs/agschulz/kalk/star/reference_110_ribo $i\
-#  $ri/${sample_name}_RI $unique_region_dir/Unique_DNA_regions_genomic_RI_16_12_24.bed $three_primes
+source ./STAR_Align_genomic_20_01_25_resample_random.sh 16 /scratch/fuchs/agschulz/kalk/star/reference_110_ribo $i\
+ $ri/${sample_name}_RI $unique_region_dir/Unique_DNA_regions_genomic_RI_16_12_24.bed $three_primes
 
-# # echo "===================       Sample $sample_name finished"
+# echo "===================       Sample $sample_name finished"
 
-# done
-
-
-source activate my_r_env
+done
 
 
-Rscript -e "if (!requireNamespace('rmarkdown', quietly = TRUE)) install.packages('rmarkdown', repos='http://cran.us.r-project.org')"
+# source activate my_r_env
 
-R -e "library(rmarkdown); rmarkdown::render(input = 'RiboSeqReportGenomic_empirical_dist.Rmd', output_file = '$outputSTAR/Riboseq_report.pdf', params=list(args = c('$outputSTAR')))"
+
+# Rscript -e "if (!requireNamespace('rmarkdown', quietly = TRUE)) install.packages('rmarkdown', repos='http://cran.us.r-project.org')"
+
+# R -e "library(rmarkdown); rmarkdown::render(input = 'RiboSeqReportGenomic_empirical_dist.Rmd', output_file = '$outputSTAR/Riboseq_report.pdf', params=list(args = c('$outputSTAR')))"
 
 # rm "$outputSTAR"/*all_chrs*
 # rm "$outputSTAR"/*.txt

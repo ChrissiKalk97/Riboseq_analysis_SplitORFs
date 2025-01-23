@@ -78,18 +78,18 @@ done < $out_path/chromosomes_unique_regions.txt
 
 
 # # align Riboreads against the genome
-# STAR\
-#  --runThreadN $numberOfThreads\
-#  --alignEndsType EndToEnd\
-#  --outSAMstrandField intronMotif\
-#  --alignIntronMin 20\
-#  --alignIntronMax 1000000\
-#  --genomeDir $StarIndex\
-#  --readFilesIn $Riboreads\
-#  --twopassMode Basic\
-#  --outFileNamePrefix $out_path/$(basename $bamfile .bam)
+STAR\
+ --runThreadN $numberOfThreads\
+ --alignEndsType EndToEnd\
+ --outSAMstrandField intronMotif\
+ --alignIntronMin 20\
+ --alignIntronMax 1000000\
+ --genomeDir $StarIndex\
+ --readFilesIn $Riboreads\
+ --twopassMode Basic\
+ --outFileNamePrefix $out_path/$(basename $bamfile .bam)
 # # #/scratch/fuchs/agschulz/kalk/star/reference_110_ribo
-# samtools view -@ $numberOfThreads -bo $bamfile $out_path/$(basename $bamfile .bam)Aligned.out.sam
+samtools view -@ $numberOfThreads -bo $bamfile $out_path/$(basename $bamfile .bam)Aligned.out.sam
 
 
 filteredBamFile=$out_path/$(basename $bamfile .bam)_filtered.bam
@@ -206,7 +206,7 @@ bedtools intersect\
    > $randomintersectfile 
 
 
-rm $randomfile
-rm $randomfile_all_chrs
-rm $bamfile
-rm $filteredBamFile
+# rm $randomfile
+# rm $randomfile_all_chrs
+# rm $bamfile
+# rm $filteredBamFile
