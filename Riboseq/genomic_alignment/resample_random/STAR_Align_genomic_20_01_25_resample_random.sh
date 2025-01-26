@@ -105,7 +105,7 @@ fi
 
 
 # echo "converting bam to bed"
-bedtools bamtobed -i $sortedBamFile -split > $bedfile
+# bedtools bamtobed -i $sortedBamFile -split > $bedfile
 
 
 echo "intersecting with unique regions"
@@ -126,22 +126,22 @@ grep -Fwf $present_chromosomes $out_path/genome_chrom_ordering.txt | sort -k1,1 
 # -w: match the whole word, e.g. 1 does not match 10, 11 etc but only 1
 # -f: file input of the pattern that are searched for
 
-bedtools intersect\
-    -s\
-    -wao\
-    -a $sorted_unique_regions\
-    -b $sorted_bedfile\
-    -sorted\
-    -g $out_path/genome_chrom_ordering_$(basename $bamfile .bam).txt\
-    | sort -nr -k13,13\
-    > $sortedBedfile
+# bedtools intersect\
+#     -s\
+#     -wao\
+#     -a $sorted_unique_regions\
+#     -b $sorted_bedfile\
+#     -sorted\
+#     -g $out_path/genome_chrom_ordering_$(basename $bamfile .bam).txt\
+#     | sort -nr -k13,13\
+#     > $sortedBedfile
 
 
 
 
 
 
-for i in {1..10}; do
+for i in {11..20}; do
   randomfile=$out_path/$(basename $bamfile .bam)_random_background_regions_${i}.bed
   python /home/fuchs/agschulz/kalk/scripts/SplitORFs/Riboseq/genomic_alignment/resample_random/BackgroundRegions_bed_genomic_fix.py\
   $sorted_unique_regions\
